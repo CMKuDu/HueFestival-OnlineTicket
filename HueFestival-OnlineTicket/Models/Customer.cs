@@ -10,7 +10,7 @@ namespace HueFestival_OnlineTicket.Models
         public string Avatar { get; set; }
         public string Emailcustomer { get; set; }
         public string Phonecustomer { get; set; }
-        [ForeignKey("Idlocation")]
-        public int Idlocation { get; set; }         
+        
+        public virtual ICollection<Location> Locations { get; set; }
     }
 }
