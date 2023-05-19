@@ -17,8 +17,6 @@ namespace HueFestival_OnlineTicket.Models
         public bool Active { get; set; }
         public DateTime? Datecreate { get; set; }
         public DateTime? Lastlogin { get; set; }
-        public int CustomerId { get; set; }
-        public virtual Customer Customer { get; set; }
-        public virtual ICollection<Roles> Roles { get; set; }
+       
     }
 }

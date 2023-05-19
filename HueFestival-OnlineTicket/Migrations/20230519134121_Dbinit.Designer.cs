@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HueFestival_OnlineTicket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230519015720_ac")]
-    partial class ac
+    [Migration("20230519134121_Dbinit")]
+    partial class Dbinit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,8 @@ namespace HueFestival_OnlineTicket.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TicketTypeId");
+
                     b.ToTable("Tickets");
                 });
 
@@ -84,8 +86,9 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Salt")
                         .IsRequired()
@@ -93,7 +96,7 @@ namespace HueFestival_OnlineTicket.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Account");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.Customer", b =>
@@ -114,9 +117,6 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<string>("Emailcustomer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Idlocation")
-                        .HasColumnType("int");
 
                     b.Property<string>("Namecustomer")
                         .IsRequired()
@@ -181,6 +181,9 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -194,6 +197,8 @@ namespace HueFestival_OnlineTicket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Locations");
                 });
@@ -263,6 +268,9 @@ namespace HueFestival_OnlineTicket.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Datecreatebook")
                         .HasColumnType("datetime2");
 
@@ -272,15 +280,6 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Idcustomer")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IdcustomerNavigationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Idtransacstatus")
-                        .HasColumnType("int");
-
                     b.Property<int>("Money")
                         .HasColumnType("int");
 
@@ -288,20 +287,23 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Transacstatus")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdcustomerNavigationId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("TicketBooks");
                 });
 
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.TicketType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -329,18 +331,18 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<bool>("Puslish")
                         .HasColumnType("bit");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("TicketTypes");
                 });
 
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.Transacstatus", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -354,18 +356,60 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("TicketBookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("TicketBookId");
 
                     b.ToTable("Transacstatus");
                 });
 
+            modelBuilder.Entity("HueFestival_OnlineTicket.Model.Ticket", b =>
+                {
+                    b.HasOne("HueFestival_OnlineTicket.Models.TicketType", "TicketTypes")
+                        .WithMany()
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketTypes");
+                });
+
+            modelBuilder.Entity("HueFestival_OnlineTicket.Models.Location", b =>
+                {
+                    b.HasOne("HueFestival_OnlineTicket.Models.Customer", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("CustomerId");
+                });
+
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.TicketBook", b =>
                 {
-                    b.HasOne("HueFestival_OnlineTicket.Models.Customer", "IdcustomerNavigation")
+                    b.HasOne("HueFestival_OnlineTicket.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("IdcustomerNavigationId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("IdcustomerNavigation");
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("HueFestival_OnlineTicket.Models.Transacstatus", b =>
+                {
+                    b.HasOne("HueFestival_OnlineTicket.Models.TicketBook", null)
+                        .WithMany("Transacstatuss")
+                        .HasForeignKey("TicketBookId");
+                });
+
+            modelBuilder.Entity("HueFestival_OnlineTicket.Models.Customer", b =>
+                {
+                    b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("HueFestival_OnlineTicket.Models.TicketBook", b =>
+                {
+                    b.Navigation("Transacstatuss");
                 });
 #pragma warning restore 612, 618
         }

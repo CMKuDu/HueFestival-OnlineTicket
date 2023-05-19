@@ -6,19 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HueFestival_OnlineTicket.Migrations
 {
     /// <inheritdoc />
-    public partial class ac : Migration
+    public partial class Dbinit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Account",
+                name: "Accounts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LoginAccount = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<int>(type: "int", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -28,7 +28,7 @@ namespace HueFestival_OnlineTicket.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Account", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,8 +41,7 @@ namespace HueFestival_OnlineTicket.Migrations
                     Birthdaycustomer = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Avatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Emailcustomer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phonecustomer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Idlocation = table.Column<int>(type: "int", nullable: false)
+                    Phonecustomer = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,22 +65,6 @@ namespace HueFestival_OnlineTicket.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Locations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    District = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,27 +100,10 @@ namespace HueFestival_OnlineTicket.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tickets",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NameTicket = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DescriptionTicket = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TicketTypeId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tickets", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TicketTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nametypeticket = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descriptionticket = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -149,22 +115,29 @@ namespace HueFestival_OnlineTicket.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketTypes", x => x.Id);
+                    table.PrimaryKey("PK_TicketTypes", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transacstatus",
+                name: "Locations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transacstatus", x => x.Id);
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Locations_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -177,32 +150,91 @@ namespace HueFestival_OnlineTicket.Migrations
                     Datepay = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Money = table.Column<int>(type: "int", nullable: false),
-                    Idtransacstatus = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Idcustomer = table.Column<int>(type: "int", nullable: false),
-                    IdcustomerNavigationId = table.Column<int>(type: "int", nullable: true)
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    Transacstatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TicketBooks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketBooks_Customers_IdcustomerNavigationId",
-                        column: x => x.IdcustomerNavigationId,
+                        name: "FK_TicketBooks_Customers_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tickets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameTicket = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescriptionTicket = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TicketTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tickets_TicketTypes_TicketTypeId",
+                        column: x => x.TicketTypeId,
+                        principalTable: "TicketTypes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transacstatus",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TicketBookId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transacstatus", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Transacstatus_TicketBooks_TicketBookId",
+                        column: x => x.TicketBookId,
+                        principalTable: "TicketBooks",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketBooks_IdcustomerNavigationId",
+                name: "IX_Locations_CustomerId",
+                table: "Locations",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketBooks_CustomerId",
                 table: "TicketBooks",
-                column: "IdcustomerNavigationId");
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketTypeId",
+                table: "Tickets",
+                column: "TicketTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacstatus_TicketBookId",
+                table: "Transacstatus",
+                column: "TicketBookId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Account");
+                name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "Events");
@@ -217,16 +249,16 @@ namespace HueFestival_OnlineTicket.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "TicketBooks");
+                name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "Tickets");
+                name: "Transacstatus");
 
             migrationBuilder.DropTable(
                 name: "TicketTypes");
 
             migrationBuilder.DropTable(
-                name: "Transacstatus");
+                name: "TicketBooks");
 
             migrationBuilder.DropTable(
                 name: "Customers");

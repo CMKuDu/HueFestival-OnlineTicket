@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HueFestival_OnlineTicket.Data;
 using HueFestival_OnlineTicket.Models;
 using BC = BCrypt.Net.BCrypt;
+
 namespace HueFestival_OnlineTicket.Controllers
 {
     [Route("api/[controller]")]
