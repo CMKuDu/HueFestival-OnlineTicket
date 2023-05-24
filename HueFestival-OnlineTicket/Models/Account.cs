@@ -17,6 +17,8 @@ namespace HueFestival_OnlineTicket.Models
         public bool Active { get; set; }
         public DateTime? Datecreate { get; set; }
         public DateTime? Lastlogin { get; set; }
-       
+        public string PasswordResetToken { get; set; }
+        public DateTime ResetTokenExpires { get; set; }
+
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 using BC = BCrypt.Net.BCrypt;
 
 namespace HueFestival_OnlineTicket.Controllers
@@ -66,9 +67,46 @@ namespace HueFestival_OnlineTicket.Controllers
             }
         }
         [HttpGet]
-        public async Task<Account> GetUser(string phone, string password)
+        public async Task<Account> GetUser(string phoneNumber, string password)
         {
-            return await _context.Accounts.FirstOrDefaultAsync(a => a.Phone == phone && a.Password == password);
+            Account user = await _context.Accounts.FirstOrDefaultAsync(u => u.Phone == phoneNumber);
+
+            if (user != null && BC.Verify(password, user.Password))
+            {
+                return user;
+            }
+
+            return null;
+        }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(string phoneNumber)
+        {
+            var user = await _context.Accounts.FirstOrDefaultAsync(u => u.Phone == phoneNumber);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            user.PasswordResetToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+            user.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _context.SaveChangesAsync();
+            return Ok(user.PasswordResetToken);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            var user = await _context.Accounts.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
+            if (user == null || user.ResetTokenExpires < DateTime.Now)
+            {
+                return BadRequest("User not found");
+            }
+
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.Password = hashedPassword;
+
+            await _context.SaveChangesAsync();
+            return Ok("Done");
         }
 
     }

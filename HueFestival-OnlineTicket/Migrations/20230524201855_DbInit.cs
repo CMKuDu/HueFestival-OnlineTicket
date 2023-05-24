@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HueFestival_OnlineTicket.Migrations
 {
     /// <inheritdoc />
-    public partial class Dbinit : Migration
+    public partial class DbInit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,7 +24,9 @@ namespace HueFestival_OnlineTicket.Migrations
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     Datecreate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Lastlogin = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Lastlogin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PasswordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResetTokenExpires = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

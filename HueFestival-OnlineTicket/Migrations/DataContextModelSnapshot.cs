@@ -83,9 +83,16 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PasswordResetToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ResetTokenExpires")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Salt")
                         .IsRequired()
