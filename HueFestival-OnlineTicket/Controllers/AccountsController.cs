@@ -23,44 +23,45 @@ namespace HueFestival_OnlineTicket.Controllers
     {
         private readonly DataContext _context;
         public IConfiguration _configuration;
-        
+
 
         public AccountsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
-            
+
         }
-
-        // GET: api/Accounts
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
+        [HttpGet("All_in4")]
+        public async Task<ActionResult<IEnumerable<Account>>> Account()
         {
-            if (_context.Accounts == null)
+            if(_context.Accounts == null)
             {
-                return NotFound();
+                return BadRequest("Something wrong");
             }
-
             return await _context.Accounts.ToListAsync();
         }
 
-        // GET: api/Accounts/5
-        [HttpGet("{id}")]
+        // GET: api/Accounts
+        [HttpGet("My_in4")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
-            if (_context.Accounts == null)
+           
+            var tk = _context.Customers.Include(x => x.Locations).SingleOrDefault(x => x.Id == id);
+            if (tk != null)
             {
-                return NotFound();
+                var lsThongTin = _context
+                    .TicketBooks
+                    .Include(x => x.Transacstatuss)
+                    .AsNoTracking()
+                    .Where(x => x.CustomerId == tk.Id)
+                    .OrderByDescending(x => x.Datecreatebook)
+                    .ToList();
+                return Ok(tk);
             }
-            var account = await _context.Accounts.FindAsync(id);
+                return BadRequest("Something wrong");
 
-            }
 
-            return account;
         }
-
-        // PUT: api/Accounts/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAccount(int id, Account account)
         {
@@ -89,10 +90,7 @@ namespace HueFestival_OnlineTicket.Controllers
 
             return NoContent();
         }
-
-        // POST: api/Accounts
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<ActionResult<Account>> PostAccount(Account account)
         {
             if (_context.Accounts == null)
@@ -102,8 +100,50 @@ namespace HueFestival_OnlineTicket.Controllers
             account.Password = BC.HashPassword(account.Password);
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
-            
+
             return CreatedAtAction("GetAccount", new { id = account.Id }, account);
+        }
+
+        // POST: api/Accounts
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpGet("Login")]
+        public async Task<Account>Login(string phone,string password)
+        {
+            Account ac = await _context.Accounts.FirstOrDefaultAsync(u => u.Phone == phone);
+            if (ac != null && BC.Verify(password, ac.Password))
+            {
+                return ac;
+            }
+            return null;
+        }
+        [HttpPost("fPassword")]
+        public async Task<IActionResult> ForgotPassword(string phoneNumber)
+        {
+            var user = await _context.Accounts.FirstOrDefaultAsync(u => u.Phone == phoneNumber);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            user.PasswordResetToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+            user.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _context.SaveChangesAsync();
+            return Ok(user.PasswordResetToken);
+        }
+        [HttpPost("rPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
+        {
+            var user = await _context.Accounts.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
+            if (user == null || user.ResetTokenExpires < DateTime.Now)
+            {
+                return BadRequest("User not found");
+            }
+
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.Password = hashedPassword;
+
+            await _context.SaveChangesAsync();
+            return Ok("Done");
         }
 
         // DELETE: api/Accounts/5
@@ -125,13 +165,13 @@ namespace HueFestival_OnlineTicket.Controllers
 
             return NoContent();
         }
-       
+
         private bool AccountExists(int id)
         {
             return (_context.Accounts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        
+
 
     }
 

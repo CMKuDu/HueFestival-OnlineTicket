@@ -126,5 +126,6 @@ namespace HueFestival_OnlineTicket.Controllers
         {
             return (_context.Tickets?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+       
     }
 }

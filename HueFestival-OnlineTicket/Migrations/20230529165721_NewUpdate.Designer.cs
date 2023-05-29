@@ -4,6 +4,7 @@ using HueFestival_OnlineTicket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HueFestival_OnlineTicket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230529165721_NewUpdate")]
+    partial class NewUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,15 +47,10 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("TicketBookId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TicketTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TicketBookId");
 
                     b.HasIndex("TicketTypeId");
 
@@ -302,9 +300,6 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<DateTime?>("Datepay")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TickId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("TicketBooks");
@@ -381,10 +376,6 @@ namespace HueFestival_OnlineTicket.Migrations
 
             modelBuilder.Entity("HueFestival_OnlineTicket.Model.Ticket", b =>
                 {
-                    b.HasOne("HueFestival_OnlineTicket.Models.TicketBook", null)
-                        .WithMany("Tickets")
-                        .HasForeignKey("TicketBookId");
-
                     b.HasOne("HueFestival_OnlineTicket.Models.TicketType", "TicketTypes")
                         .WithMany()
                         .HasForeignKey("TicketTypeId")
@@ -435,8 +426,6 @@ namespace HueFestival_OnlineTicket.Migrations
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.TicketBook", b =>
                 {
                     b.Navigation("Customers");
-
-                    b.Navigation("Tickets");
 
                     b.Navigation("Transacstatuss");
                 });

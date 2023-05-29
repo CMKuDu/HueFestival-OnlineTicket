@@ -19,6 +19,8 @@ namespace HueFestival_OnlineTicket.Models
         public DateTime? Lastlogin { get; set; }
         public string PasswordResetToken { get; set; }
         public DateTime ResetTokenExpires { get; set; }
+        public int LocationId { get; set; }
+        public virtual ICollection<Roles> Roless { get; set; }
 
     }
 }
