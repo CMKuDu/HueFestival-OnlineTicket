@@ -24,11 +24,11 @@ namespace HueFestival_OnlineTicket.Controllers
         // GET: api/Tickets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
-        {
-          if (_context.Tickets == null)
-          {
-              return NotFound();
-          }
+        {   
+            if (_context.Tickets == null)
+            {
+                return NotFound();
+            }
             return await _context.Tickets.ToListAsync();
         }
 
@@ -36,18 +36,24 @@ namespace HueFestival_OnlineTicket.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
-          if (_context.Tickets == null)
-          {
-              return NotFound();
-          }
-            var ticket = await _context.Tickets.FindAsync(id);
-
-            if (ticket == null)
+            try
+            {
+                var ticket = _context.Tickets.Include(x => x.TicketTypes).FirstOrDefault(x => x.Id == id);
+                if (ticket == null)
+                {
+                    return NotFound();
+                }
+                var tickets =  _context.Tickets.AsNoTracking()
+                    .Where(x => x.TicketTypeId == ticket.TicketTypeId && x.Id != id)
+                    .OrderByDescending(x => x.CreatedDate)
+                    .Take(5)
+                    .ToList();
+                return ticket;
+            }
+            catch
             {
                 return NotFound();
             }
-
-            return ticket;
         }
 
         // PUT: api/Tickets/5
@@ -86,10 +92,10 @@ namespace HueFestival_OnlineTicket.Controllers
         [HttpPost]
         public async Task<ActionResult<Ticket>> PostTicket(Ticket ticket)
         {
-          if (_context.Tickets == null)
-          {
-              return Problem("Entity set 'DataContext.Tickets'  is null.");
-          }
+            if (_context.Tickets == null)
+            {
+                return Problem("Entity set 'DataContext.Tickets'  is null.");
+            }
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
 

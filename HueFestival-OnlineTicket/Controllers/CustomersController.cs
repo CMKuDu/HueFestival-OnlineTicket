@@ -36,13 +36,21 @@ namespace HueFestival_OnlineTicket.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(int id)
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
-            var customer = await _context.Customers.FindAsync(id);
-
-            if (customer == null)
+            try
+            {
+                var customer = _context.Customers.Include(x => x.Locations).FirstOrDefault(x => x.Id == id);
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                var customers = _context.Customers.AsNoTracking()
+                    .Where(x => x.LocationId == customer.Id && x.Id != id)
+                    .OrderByDescending(x => x.Id)
+                    .Take(5)
+                    .ToList();
+                return customer;
+            }
+            catch
             {
                 return NotFound();
             }
@@ -90,6 +98,7 @@ namespace HueFestival_OnlineTicket.Controllers
           }
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
+            
 
             return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }

@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
-
+using AspNetCoreHero.ToastNotification;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

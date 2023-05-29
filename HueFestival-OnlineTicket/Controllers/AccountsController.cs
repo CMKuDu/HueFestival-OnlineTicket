@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
 
+
 namespace HueFestival_OnlineTicket.Controllers
 {
     [Route("api/[controller]")]
@@ -22,11 +23,13 @@ namespace HueFestival_OnlineTicket.Controllers
     {
         private readonly DataContext _context;
         public IConfiguration _configuration;
+        
 
         public AccountsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+            
         }
 
         // GET: api/Accounts
@@ -102,7 +105,7 @@ namespace HueFestival_OnlineTicket.Controllers
             account.Password = BC.HashPassword(account.Password);
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
-
+            
             return CreatedAtAction("GetAccount", new { id = account.Id }, account);
         }
 
@@ -130,6 +133,7 @@ namespace HueFestival_OnlineTicket.Controllers
         {
             return (_context.Accounts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
         
 
     }

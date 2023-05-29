@@ -1,4 +1,6 @@
-﻿namespace HueFestival_OnlineTicket.Models
+﻿using static NuGet.Packaging.PackagingConstants;
+
+namespace HueFestival_OnlineTicket.Models
 {
     public class Transacstatus
     {
@@ -7,5 +9,6 @@
         public string Note { get; set; }
         public string Status { get; set; }
         
+
     }
 }

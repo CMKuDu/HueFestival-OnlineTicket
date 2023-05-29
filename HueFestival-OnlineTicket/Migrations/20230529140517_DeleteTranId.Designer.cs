@@ -4,6 +4,7 @@ using HueFestival_OnlineTicket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HueFestival_OnlineTicket.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230529140517_DeleteTranId")]
+    partial class DeleteTranId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,9 +124,6 @@ namespace HueFestival_OnlineTicket.Migrations
                     b.Property<string>("Emailcustomer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Namecustomer")
                         .IsRequired()
@@ -350,12 +350,7 @@ namespace HueFestival_OnlineTicket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TicketBookId")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
-
-                    b.HasIndex("TicketBookId");
 
                     b.ToTable("Transacstatus");
                 });
@@ -385,13 +380,6 @@ namespace HueFestival_OnlineTicket.Migrations
                         .HasForeignKey("CustomerId");
                 });
 
-            modelBuilder.Entity("HueFestival_OnlineTicket.Models.Transacstatus", b =>
-                {
-                    b.HasOne("HueFestival_OnlineTicket.Models.TicketBook", null)
-                        .WithMany("Transacstatuss")
-                        .HasForeignKey("TicketBookId");
-                });
-
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.Customer", b =>
                 {
                     b.Navigation("Locations");
@@ -400,8 +388,6 @@ namespace HueFestival_OnlineTicket.Migrations
             modelBuilder.Entity("HueFestival_OnlineTicket.Models.TicketBook", b =>
                 {
                     b.Navigation("Customers");
-
-                    b.Navigation("Transacstatuss");
                 });
 #pragma warning restore 612, 618
         }
