@@ -54,9 +54,6 @@ namespace HueFestival_OnlineTicket.Controllers
             }
             var account = await _context.Accounts.FindAsync(id);
 
-            if (account == null)
-            {
-                return NotFound();
             }
 
             return account;
