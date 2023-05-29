@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using HueFestival_OnlineTicket.Data;
 using HueFestival_OnlineTicket.Models;
 using BC = BCrypt.Net.BCrypt;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace HueFestival_OnlineTicket.Controllers
 {
@@ -16,20 +21,22 @@ namespace HueFestival_OnlineTicket.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly DataContext _context;
+        public IConfiguration _configuration;
 
-        public AccountsController(DataContext context)
+        public AccountsController(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // GET: api/Accounts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Account>>> GetAccounts()
         {
-          if (_context.Accounts == null)
-          {
-              return NotFound();
-          }
+            if (_context.Accounts == null)
+            {
+                return NotFound();
+            }
 
             return await _context.Accounts.ToListAsync();
         }
@@ -38,10 +45,10 @@ namespace HueFestival_OnlineTicket.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Account>> GetAccount(int id)
         {
-          if (_context.Accounts == null)
-          {
-              return NotFound();
-          }
+            if (_context.Accounts == null)
+            {
+                return NotFound();
+            }
             var account = await _context.Accounts.FindAsync(id);
 
             if (account == null)
@@ -88,10 +95,10 @@ namespace HueFestival_OnlineTicket.Controllers
         [HttpPost]
         public async Task<ActionResult<Account>> PostAccount(Account account)
         {
-          if (_context.Accounts == null)
-          {
-              return Problem("Entity set 'DataContext.Accounts'  is null.");
-          }
+            if (_context.Accounts == null)
+            {
+                return Problem("Entity set 'DataContext.Accounts'  is null.");
+            }
             account.Password = BC.HashPassword(account.Password);
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
@@ -118,10 +125,13 @@ namespace HueFestival_OnlineTicket.Controllers
 
             return NoContent();
         }
-
+       
         private bool AccountExists(int id)
         {
             return (_context.Accounts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        
+
     }
+
 }

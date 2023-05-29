@@ -78,7 +78,7 @@ namespace HueFestival_OnlineTicket.Controllers
 
             return null;
         }
-        [HttpPost("forgot-password")]
+        [HttpPost("fPassword")]
         public async Task<IActionResult> ForgotPassword(string phoneNumber)
         {
             var user = await _context.Accounts.FirstOrDefaultAsync(u => u.Phone == phoneNumber);
@@ -93,7 +93,7 @@ namespace HueFestival_OnlineTicket.Controllers
             return Ok(user.PasswordResetToken);
         }
 
-        [HttpPost("reset-password")]
+        [HttpPost("rPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest request)
         {
             var user = await _context.Accounts.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
