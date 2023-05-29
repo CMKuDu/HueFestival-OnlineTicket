@@ -46,8 +46,6 @@ namespace HueFestival_OnlineTicket.Controllers
             {
                 return NotFound();
             }
-
-            return customer;
         }
 
         // PUT: api/Customers/5
